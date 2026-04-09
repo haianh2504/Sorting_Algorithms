@@ -1,45 +1,53 @@
-
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <cassert>
 using namespace std;
 
-// Quick Sort
-void quickSort(vector<int> &arr, int left, int right)
+template <typename T>
+class quickSort_Middle
 {
-    // guard clause
-    if(left >= right) return;
-    // find the middle point as the pivot
-    // left side of the pivot includes smaller values / right side includes bigger values
-    int pivot_middle = (left+right)/2;
-    int i = left;
-    int j = right;
-    while(i < j)
-    {
-        while(arr[i] < arr[pivot_middle]) i++;
-        while(arr[j] > arr[pivot_middle]) j--;
-        if(i <= j)
-        {
-            swap(arr[i], arr[j]);
-            i++;
-            j--;
-        }
-    };
+    private:
+    quickSort_Middle(){};
+    public:
     //
-    if(i < right) quickSort(arr, i, right);
-    if(j > left) quickSort(arr, left, j);
-    
-}
-// function overload
-void quickSort(vector<int> &arr)
-{
+    static void quickSort(vector<T> &arr, size_t left, size_t right)
+    {
+        // guard clause
+        if(left >= right) return;
+        
+        //
+        T pivot = arr[left+(right-left)/2];
+        // 2 pointers aside
+        auto i = left;
+        auto j = right;
+        while(i < j)
+        {
+            while(arr[i] < pivot) i++;
+            while(arr[j] > pivot) j--;
+            if(i <= j)
+            {
+                swap(arr[i], arr[j]);
+                i++;
+                j--;
+            }
+        };
+        if(left < j) quicksort(arr, left, j);
+        if(right > i) quicksort(arr, i, right);
+    }
+
+    // function overload
+    static void quickSort(vector<int> &arr)
+    {
     if(!arr.empty())
     {
         quickSort(arr, 0, arr.size() - 1);
     }
-}
+    }
+};
+
+
+
 // unit_testing
 // Kiểm tra mảng đã sắp xếp chưa
 bool isSorted(const vector<int>& arr) {
@@ -74,5 +82,5 @@ void runTests(void (*sortFunc)(vector<int>&)) {
 
 int main()
 {
-    runTests(quickSort);
+    runTests(quickSort_Middle<int>::quickSort);
 }
